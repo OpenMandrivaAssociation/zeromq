@@ -17,7 +17,7 @@ Group:		Development/Other
 Url:		http://www.zeromq.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires:	glib2-devel
-BuildRequires:	lib64uuid-devel
+BuildRequires:	libuuid-devel
 
 %description
 The 0MQ lightweight messaging kernel is a library which extends the
