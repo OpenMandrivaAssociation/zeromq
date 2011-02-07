@@ -1,9 +1,9 @@
 %define name	zeromq
-%define version	2.0.10
-%define release %mkrel 1
+%define version	2.1.0
+%define release %mkrel 0.beta.0
 
 %define libname_orig lib%{name} 
-%define major	0
+%define major	1
 %define libname	%mklibname %{name} %{major}
 %define develname %mklibname %{name} -d
 
