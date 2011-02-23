@@ -1,6 +1,6 @@
 %define name	zeromq
-%define version	2.1.0
-%define release %mkrel 0.beta.0
+%define version	2.1.1
+%define release %mkrel 0.rc1.0
 
 %define libname_orig lib%{name} 
 %define major	1
@@ -79,7 +79,11 @@ This package contains %{name}-related utilities.
 %setup -q
 
 %build
+%ifarch pentium3 pentium4 athlon i386 i486 i586 i686 x86_64
+%configure2_5x --with-pgm
+%else
 %configure2_5x
+%endif
 %make
 
 %install
