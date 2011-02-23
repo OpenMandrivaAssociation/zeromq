@@ -1,6 +1,6 @@
 %define name	zeromq
 %define version	2.1.1
-%define release %mkrel 0.rc1.0
+%define release %mkrel 0.rc1.1
 
 %define libname_orig lib%{name} 
 %define major	1
@@ -18,6 +18,7 @@ Url:		http://www.zeromq.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires:	glib2-devel
 BuildRequires:	libuuid-devel
+BuildRequires:	python
 
 %description
 The 0MQ lightweight messaging kernel is a library which extends the
