@@ -1,6 +1,6 @@
 %define name	zeromq
-%define version	2.1.2
-%define release %mkrel 0.rc2.0
+%define version	2.1.3
+%define release %mkrel 1
 
 %define libname_orig lib%{name} 
 %define major	1
@@ -61,30 +61,11 @@ multiple transport protocols and more.
 This package contains the libraries and header files needed to develop
 applications that use %{name}.
 
-%package -n	%{name}-utils
-Summary: 	Utilities for %{name}
-Group:		Development/Other
-Requires:	%{libname} = %{version}-%{release}
-
-%description -n %{name}-utils
-The 0MQ lightweight messaging kernel is a library which extends the
-standard socket interfaces with features traditionally provided by
-specialized messaging middle-ware products. 0MQ sockets provide an
-abstraction of asynchronous message queues, multiple messaging
-patterns, message filtering (subscriptions), seamless access to
-multiple transport protocols and more.
-
-This package contains %{name}-related utilities.
-
 %prep
 %setup -q
 
 %build
-%ifarch pentium3 pentium4 athlon i386 i486 i586 i686 x86_64
-%configure2_5x --with-pgm
-%else
 %configure2_5x
-%endif
 %make
 
 %install
@@ -109,7 +90,3 @@ This package contains %{name}-related utilities.
 %{_mandir}/man3/zmq*
 %{_mandir}/man7/zmq*
 
-%files -n %{name}-utils
-%defattr(-,root,root)
-%{_bindir}/zmq*
-%{_mandir}/man1/zmq*
