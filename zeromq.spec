@@ -1,6 +1,6 @@
 %define name	zeromq
 %define version	2.1.3
-%define release %mkrel 1
+%define release %mkrel 2
 
 %define libname_orig lib%{name} 
 %define major	1
@@ -32,6 +32,7 @@ multiple transport protocols and more.
 Summary: 	Software library for fast, message-based applications
 Group:		System/Libraries
 Provides:	%{libname_orig} = %{version}-%{release}
+Obsoletes:	%{name}-utils
 
 %description -n %{libname}
 The 0MQ lightweight messaging kernel is a library which extends the
