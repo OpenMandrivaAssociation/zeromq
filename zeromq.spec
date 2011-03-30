@@ -1,6 +1,6 @@
 %define name	zeromq
-%define version	2.1.3
-%define release %mkrel 2
+%define version	2.1.4
+%define release %mkrel 1
 
 %define libname_orig lib%{name} 
 %define major	1
