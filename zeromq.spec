@@ -1,5 +1,5 @@
 %define name	zeromq
-%define version	2.1.4
+%define version	2.1.6
 %define release %mkrel 1
 
 %define libname_orig lib%{name} 
@@ -11,7 +11,7 @@ Summary:	Software library for fast, message-based applications
 Name:		%{name}
 Version:	%{version}
 Release:	%{release}
-Source0:	http://www.zeromq.org/local--files/area:download/%{name}-%{version}.tar.gz
+Source0:	http://download.zeromq.org/%{name}-%{version}.tar.gz
 License:	LGPLv3+
 Group:		Development/Other
 Url:		http://www.zeromq.org
