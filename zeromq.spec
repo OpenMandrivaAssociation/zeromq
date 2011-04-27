@@ -67,6 +67,7 @@ applications that use %{name}.
 
 %build
 %configure2_5x
+export CFLAGS="$CFLAGS -fno-strict-aliasing"
 %make
 
 %install
