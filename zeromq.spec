@@ -85,7 +85,9 @@ export CFLAGS="$CFLAGS -fno-strict-aliasing"
 %files -n %{develname}
 %defattr(-,root,root)
 %{_libdir}/libzmq.a
+%if %mdkversion < 201200
 %{_libdir}/libzmq.la
+%endif
 %{_libdir}/libzmq.so
 %{_libdir}/pkgconfig/libzmq.pc
 %{_includedir}/zmq*
