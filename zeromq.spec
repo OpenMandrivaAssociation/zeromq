@@ -1,6 +1,6 @@
 %define name	zeromq
 %define version	2.1.11
-%define release %mkrel 1
+%define release %mkrel 2
 
 %define libname_orig lib%{name} 
 %define major	1
@@ -67,7 +67,7 @@ applications that use %{name}.
 
 %build
 export CFLAGS="$CFLAGS -fno-strict-aliasing"
-./configure --prefix=/usr
+./configure --prefix=/usr --with-pgm
 %make
 
 %install
