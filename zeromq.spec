@@ -1,6 +1,11 @@
 %define name	zeromq
-%define version	2.1.11
-%define release %mkrel 2
+%define version	2.2.0
+%define	rel		1
+%if %mdkversion < 201100
+%define release %mkrel %rel
+%else
+%define release %rel
+%endif
 
 %define libname_orig lib%{name} 
 %define major	1
