@@ -1,14 +1,9 @@
 %define name	zeromq
-%define version	2.2.0
-%define	rel		1
-%if %mdkversion < 201100
-%define release %mkrel %rel
-%else
-%define release %rel
-%endif
+%define version	3.2.0
+%define release 0.1
 
 %define libname_orig lib%{name} 
-%define major	1
+%define major	3
 %define libname	%mklibname %{name} %{major}
 %define develname %mklibname %{name} -d
 
@@ -16,7 +11,7 @@ Summary:	Software library for fast, message-based applications
 Name:		%{name}
 Version:	%{version}
 Release:	%{release}
-Source0:	http://download.zeromq.org/%{name}-%{version}.tar.gz
+Source0:	http://download.zeromq.org/%{name}-%{version}-rc1.tar.gz
 License:	LGPLv3+
 Group:		Development/Other
 Url:		http://www.zeromq.org
@@ -68,10 +63,10 @@ This package contains the libraries and header files needed to develop
 applications that use %{name}.
 
 %prep
-%setup -q
+%setup -q 
 
 %build
-export CFLAGS="$CFLAGS -fno-strict-aliasing"
+export CFLAGS="$CFLAGS -fno-strict-aliasing -Wno-error=unused-variable" CXXFLAGS="$CXXFLAGS -Wno-error=unused-variable"
 ./configure --prefix=/usr --with-pgm
 %make
 
@@ -85,7 +80,7 @@ export CFLAGS="$CFLAGS -fno-strict-aliasing"
 %files -n %{libname}
 %defattr(-,root,root)
 %doc AUTHORS ChangeLog COPYING* NEWS README
-%{_libdir}/libzmq.so.*
+%{_libdir}/libzmq.so.%{major}*
 
 %files -n %{develname}
 %defattr(-,root,root)
