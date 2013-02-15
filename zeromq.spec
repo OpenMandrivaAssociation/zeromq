@@ -67,7 +67,7 @@ applications that use %{name}.
 
 %build
 export CFLAGS="$CFLAGS -fno-strict-aliasing -Wno-error=unused-variable" CXXFLAGS="$CXXFLAGS -Wno-error=unused-variable"
-./configure --prefix=/usr --with-pgm
+./configure --prefix=/usr --with-pgm --enable-debug
 %make
 
 %install
