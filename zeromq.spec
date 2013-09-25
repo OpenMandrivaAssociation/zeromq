@@ -1,23 +1,19 @@
-%define name	zeromq
-%define version	3.2.2
-%define release 1
-
 %define libname_orig lib%{name} 
 %define major	3
 %define libname	%mklibname %{name} %{major}
 %define develname %mklibname %{name} -d
 
 Summary:	Software library for fast, message-based applications
-Name:		%{name}
-Version:	%{version}
-Release:	%{release}
+Name:		zeromq
+Version:	3.2.4
+Release:	1
 Source0:	http://download.zeromq.org/%{name}-%{version}.tar.gz
 License:	LGPLv3+
 Group:		Development/Other
 Url:		http://www.zeromq.org
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
-BuildRequires:	glib2-devel
-BuildRequires:	libuuid-devel
+BuildRequires:	pkgconfig(glib-2.0)
+BuildRequires:	pkgconfig(uuid)
+BuildRequires:	pkgconfig(openpgm-5.2)
 BuildRequires:	python
 
 %description
@@ -64,35 +60,28 @@ applications that use %{name}.
 
 %prep
 %setup -q 
+# remove all files in foreign except Makefiles
+rm -v $(find foreign -type f | grep -v Makefile)
+
+# Don't turn warnings into errors
+sed -i "s/libzmq_werror=\"yes\"/libzmq_werror=\"no\"/g" \
+    configure
 
 %build
-export CFLAGS="$CFLAGS -fno-strict-aliasing -Wno-error=unused-variable" CXXFLAGS="$CXXFLAGS -Wno-error=unused-variable"
-./configure --prefix=/usr --with-pgm --enable-debug
+export CFLAGS="%optflags"
+%configure2_5x --with-system-pgm --disable-static
 %make
 
 %install
-%__rm -rf %{buildroot}
-%makeinstall
-
-%clean
-%__rm -rf %{buildroot}
+%makeinstall_std
 
 %files -n %{libname}
-%defattr(-,root,root)
 %doc AUTHORS ChangeLog COPYING* NEWS README
 %{_libdir}/libzmq.so.%{major}*
 
 %files -n %{develname}
-%defattr(-,root,root)
-%{_libdir}/libzmq.a
-%if %mdkversion < 201200
-%{_libdir}/libzmq.la
-%endif
 %{_libdir}/libzmq.so
 %{_libdir}/pkgconfig/libzmq.pc
 %{_includedir}/zmq*
 %{_mandir}/man3/zmq*
 %{_mandir}/man7/zmq*
-
-
-
