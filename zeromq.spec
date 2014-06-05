@@ -1,12 +1,14 @@
-%define libname_orig lib%{name} 
-%define major	3
-%define libname	%mklibname %{name} %{major}
-%define develname %mklibname %{name} -d
+%define	major	3
+%define	oldlib	%mklibname %{name} %{major}
+%define	olddev	%mklibname %{name} -d
+%define	oname	zmq
+%define	libname	%mklibname %{oname} %{major}
+%define	devname	%mklibname %{oname} -d
 
 Summary:	Software library for fast, message-based applications
 Name:		zeromq
 Version:	3.2.4
-Release:	1
+Release:	2
 Source0:	http://download.zeromq.org/%{name}-%{version}.tar.gz
 License:	LGPLv3+
 Group:		Development/Other
@@ -27,8 +29,8 @@ multiple transport protocols and more.
 %package -n	%{libname}
 Summary: 	Software library for fast, message-based applications
 Group:		System/Libraries
-Provides:	%{libname_orig} = %{version}-%{release}
 Obsoletes:	%{name}-utils
+%rename		%{oldlib}
 
 %description -n %{libname}
 The 0MQ lightweight messaging kernel is a library which extends the
@@ -38,16 +40,16 @@ abstraction of asynchronous message queues, multiple messaging
 patterns, message filtering (subscriptions), seamless access to
 multiple transport protocols and more.
 
-This package contains the ${name} shared library.
+This package contains the %{name} shared library.
 
-%package -n	%{develname}
+%package -n	%{devname}
 Summary: 	Development files for %{name}
 Group:		Development/C
 Requires:	%{libname} = %{version}-%{release}
 Provides:	%{name}-devel = %{version}-%{release}
-Provides:	%{libname_orig}-devel = %{version}-%{release}
+%rename		%{olddev}
 
-%description -n %{develname}
+%description -n %{devname}
 The 0MQ lightweight messaging kernel is a library which extends the
 standard socket interfaces with features traditionally provided by
 specialized messaging middle-ware products. 0MQ sockets provide an
@@ -68,8 +70,7 @@ sed -i "s/libzmq_werror=\"yes\"/libzmq_werror=\"no\"/g" \
     configure
 
 %build
-export CFLAGS="%optflags"
-%configure2_5x --with-system-pgm --disable-static
+%configure2_5x --with-system-pgm
 %make
 
 %install
@@ -79,7 +80,7 @@ export CFLAGS="%optflags"
 %doc AUTHORS ChangeLog COPYING* NEWS README
 %{_libdir}/libzmq.so.%{major}*
 
-%files -n %{develname}
+%files -n %{devname}
 %{_libdir}/libzmq.so
 %{_libdir}/pkgconfig/libzmq.pc
 %{_includedir}/zmq*
