@@ -10,6 +10,7 @@ Name:		zeromq
 Version:	3.2.4
 Release:	2
 Source0:	http://download.zeromq.org/%{name}-%{version}.tar.gz
+Patch0:		zeromq-3.2.4-fix-strict-aliasing-violations.patch
 License:	LGPLv3+
 Group:		Development/Other
 Url:		http://www.zeromq.org
@@ -62,12 +63,8 @@ applications that use %{name}.
 
 %prep
 %setup -q 
-# remove all files in foreign except Makefiles
-rm -v $(find foreign -type f | grep -v Makefile)
-
-# Don't turn warnings into errors
-sed -i "s/libzmq_werror=\"yes\"/libzmq_werror=\"no\"/g" \
-    configure
+%patch0 -p1 -b .aliasing~
+autoreconf -fiv
 
 %build
 %configure2_5x --with-system-pgm
