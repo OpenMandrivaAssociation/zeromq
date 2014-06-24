@@ -1,14 +1,14 @@
-%define	major	3
-%define	oldlib	%mklibname %{name} %{major}
-%define	olddev	%mklibname %{name} -d
-%define	oname	zmq
-%define	libname	%mklibname %{oname} %{major}
-%define	devname	%mklibname %{oname} -d
+%define major 3
+%define oldlib %mklibname %{name} %{major}
+%define olddev %mklibname %{name} -d
+%define oname zmq
+%define libname %mklibname %{oname} %{major}
+%define devname %mklibname %{oname} -d
 
 Summary:	Software library for fast, message-based applications
 Name:		zeromq
 Version:	3.2.4
-Release:	2
+Release:	3
 Source0:	http://download.zeromq.org/%{name}-%{version}.tar.gz
 Patch0:		zeromq-3.2.4-fix-strict-aliasing-violations.patch
 License:	LGPLv3+
@@ -28,7 +28,7 @@ patterns, message filtering (subscriptions), seamless access to
 multiple transport protocols and more.
 
 %package -n	%{libname}
-Summary: 	Software library for fast, message-based applications
+Summary:	Software library for fast, message-based applications
 Group:		System/Libraries
 Obsoletes:	%{name}-utils
 %rename		%{oldlib}
@@ -44,7 +44,7 @@ multiple transport protocols and more.
 This package contains the %{name} shared library.
 
 %package -n	%{devname}
-Summary: 	Development files for %{name}
+Summary:	Development files for %{name}
 Group:		Development/C
 Requires:	%{libname} = %{version}-%{release}
 Provides:	%{name}-devel = %{version}-%{release}
@@ -67,17 +67,17 @@ applications that use %{name}.
 autoreconf -fiv
 
 %build
-%configure2_5x --with-system-pgm
+%configure --with-system-pgm
 %make
 
 %install
 %makeinstall_std
 
 %files -n %{libname}
-%doc AUTHORS ChangeLog COPYING* NEWS README
 %{_libdir}/libzmq.so.%{major}*
 
 %files -n %{devname}
+%doc AUTHORS ChangeLog COPYING* NEWS README
 %{_libdir}/libzmq.so
 %{_libdir}/pkgconfig/libzmq.pc
 %{_includedir}/zmq*
