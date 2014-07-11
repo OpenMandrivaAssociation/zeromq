@@ -8,7 +8,7 @@
 Summary:	Software library for fast, message-based applications
 Name:		zeromq
 Version:	3.2.4
-Release:	3
+Release:	4
 Source0:	http://download.zeromq.org/%{name}-%{version}.tar.gz
 Patch0:		zeromq-3.2.4-fix-strict-aliasing-violations.patch
 License:	LGPLv3+
