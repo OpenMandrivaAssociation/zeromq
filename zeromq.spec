@@ -69,7 +69,9 @@ autoreconf -fiv
 %build
 # https://zeromq.jira.com/browse/LIBZMQ-592
 export libzmq_cv_poller=true
-%configure --with-system-pgm
+%configure	--with-system-pgm \
+		CC=gcc \
+		CXX=g++
 %make
 
 %install
