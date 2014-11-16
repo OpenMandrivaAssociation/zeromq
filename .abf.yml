@@ -1,4 +1,2 @@
-removed_sources:
-  zeromq-3.2.2.tar.gz: 0e8734c773b6a757b474c16fc3c517993ba47283
 sources:
-  zeromq-3.2.4.tar.gz: 08303259f08edd1faeac2e256f5be3899377135e
+  zeromq-4.1.0-rc1.tar.gz: bb10ad16fcaf5bb8e362d3d5ac44cef76db9b22d

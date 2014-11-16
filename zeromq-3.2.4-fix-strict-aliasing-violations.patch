@@ -1,23 +1,6 @@
-From e33814ea61d72899cfedf3761d3425fe4a8cd56e Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Per=20=C3=98yvind=20Karlsen=20=28proyvind=29?=
- <proyvind@moondrake.org>
-Date: Thu, 5 Jun 2014 22:14:00 +0200
-Subject: [PATCH] fix strict aliasing violations
-
----
- configure.in         |  7 +++++++
- src/ipc_address.cpp  | 16 ++++++++--------
- src/ipc_address.hpp  |  5 ++++-
- src/ipc_listener.cpp | 13 ++++++++-----
- src/tcp_address.cpp  |  7 +++++--
- src/tcp_listener.cpp | 27 +++++++++++++++++----------
- 6 files changed, 51 insertions(+), 31 deletions(-)
-
-diff --git a/configure.in b/configure.in
-index 1de6778..6fc0afd 100644
---- a/configure.in
-+++ b/configure.in
-@@ -222,6 +222,13 @@ if test "x$libzmq_dso_visibility" = "xyes"; then
+--- zeromq-4.1.0/configure.ac.aliasing~	2014-11-16 12:12:30.461107125 +0100
++++ zeromq-4.1.0/configure.ac	2014-11-16 12:12:30.491106750 +0100
+@@ -327,6 +327,13 @@ if test "x$libzmq_dso_visibility" = "xye
      AC_LANG_POP([C++])
  fi
  
@@ -31,26 +14,27 @@ index 1de6778..6fc0afd 100644
  # CPU-specific optimizations
  case "${host_cpu}" in
      *sparc*)
-diff --git a/src/ipc_address.cpp b/src/ipc_address.cpp
-index 169f236..c7579dc 100644
---- a/src/ipc_address.cpp
-+++ b/src/ipc_address.cpp
-@@ -29,7 +29,7 @@
+--- zeromq-4.1.0/src/ipc_address.cpp.aliasing~	2014-10-14 10:27:47.000000000 +0200
++++ zeromq-4.1.0/src/ipc_address.cpp	2014-11-16 12:15:24.061936816 +0100
+@@ -28,7 +28,7 @@
  
  zmq::ipc_address_t::ipc_address_t ()
  {
--    memset (&address, 0, sizeof (address));
-+    memset (&address.un, 0, sizeof (address.un));
+-    memset (&address, 0, sizeof address);
++    memset (&address.un, 0, sizeof address);
  }
  
  zmq::ipc_address_t::ipc_address_t (const sockaddr *sa, socklen_t sa_len)
-@@ -48,37 +48,37 @@ zmq::ipc_address_t::~ipc_address_t ()
+@@ -46,7 +46,7 @@ zmq::ipc_address_t::~ipc_address_t ()
  
  int zmq::ipc_address_t::resolve (const char *path_)
  {
--    if (strlen (path_) >= sizeof (address.sun_path)) {
-+    if (strlen (path_) >= sizeof (address.un.sun_path)) {
+-    if (strlen (path_) >= sizeof address.sun_path) {
++    if (strlen (path_) >= sizeof address.un.sun_path) {
          errno = ENAMETOOLONG;
+         return -1;
+     }
+@@ -55,41 +55,41 @@ int zmq::ipc_address_t::resolve (const c
          return -1;
      }
  
@@ -58,6 +42,10 @@ index 169f236..c7579dc 100644
 -    strcpy (address.sun_path, path_);
 +    address.un.sun_family = AF_UNIX;
 +    strcpy (address.un.sun_path, path_);
+     /* Abstract sockets start with '\0' */
+     if (path_ [0] == '@')
+-        *address.sun_path = '\0';
++        *address.un.sun_path = '\0';
      return 0;
  }
  
@@ -70,8 +58,14 @@ index 169f236..c7579dc 100644
      }
  
      std::stringstream s;
--    s << "ipc://" << address.sun_path;
-+    s << "ipc://" << address.un.sun_path;
+     s << "ipc://";
+-    if (!address.sun_path [0] && address.sun_path [1])
+-       s << "@" << address.sun_path + 1;
++    if (!address.un.sun_path [0] && address.un.sun_path [1])
++       s << "@" << address.un.sun_path + 1;
+     else
+-       s << address.sun_path;
++       s << address.un.sun_path;
      addr_ = s.str ();
      return 0;
  }
@@ -84,16 +78,18 @@ index 169f236..c7579dc 100644
  
  socklen_t zmq::ipc_address_t::addrlen () const
  {
--    return (socklen_t) sizeof (address);
-+    return (socklen_t) sizeof (address.un);
+-    if (!address.sun_path [0] && address.sun_path [1])
+-        return (socklen_t) strlen (address.sun_path + 1) + sizeof (sa_family_t) + 1;
+-    return (socklen_t) sizeof address;
++    if (!address.un.sun_path [0] && address.un.sun_path [1])
++        return (socklen_t) strlen (address.un.sun_path + 1) + sizeof (sa_family_t) + 1;
++    return (socklen_t) sizeof address.un;
  }
  
  #endif
-diff --git a/src/ipc_address.hpp b/src/ipc_address.hpp
-index 081fc54..9d19afb 100644
---- a/src/ipc_address.hpp
-+++ b/src/ipc_address.hpp
-@@ -52,7 +52,10 @@ namespace zmq
+--- zeromq-4.1.0/src/ipc_address.hpp.aliasing~	2014-10-14 10:27:47.000000000 +0200
++++ zeromq-4.1.0/src/ipc_address.hpp	2014-11-16 12:12:25.005175333 +0100
+@@ -51,7 +51,10 @@ namespace zmq
  
      private:
  
@@ -105,11 +101,9 @@ index 081fc54..9d19afb 100644
  
          ipc_address_t (const ipc_address_t&);
          const ipc_address_t &operator = (const ipc_address_t&);
-diff --git a/src/ipc_listener.cpp b/src/ipc_listener.cpp
-index 28b01a6..c619bdd 100644
---- a/src/ipc_listener.cpp
-+++ b/src/ipc_listener.cpp
-@@ -101,19 +101,22 @@ void zmq::ipc_listener_t::in_event ()
+--- zeromq-4.1.0/src/ipc_listener.cpp.aliasing~	2014-10-14 10:27:47.000000000 +0200
++++ zeromq-4.1.0/src/ipc_listener.cpp	2014-11-16 12:12:25.006175321 +0100
+@@ -112,19 +112,22 @@ void zmq::ipc_listener_t::in_event ()
  
  int zmq::ipc_listener_t::get_address (std::string &addr_)
  {
@@ -137,29 +131,25 @@ index 28b01a6..c619bdd 100644
      return addr.to_string (addr_);
  }
  
-diff --git a/src/tcp_address.cpp b/src/tcp_address.cpp
-index 8a08b46..2cff0ce 100644
---- a/src/tcp_address.cpp
-+++ b/src/tcp_address.cpp
-@@ -217,8 +217,11 @@ int zmq::tcp_address_t::resolve_interface (const char *interface_,
-     bool ipv4only_)
+--- zeromq-4.1.0/src/tcp_address.cpp.aliasing~	2014-10-14 10:27:47.000000000 +0200
++++ zeromq-4.1.0/src/tcp_address.cpp	2014-11-16 12:12:25.006175321 +0100
+@@ -212,8 +212,11 @@ int zmq::tcp_address_t::resolve_nic_name
+ int zmq::tcp_address_t::resolve_interface (const char *interface_, bool ipv6_, bool is_src_)
  {
      //  Initialize temporary output pointers with storage address.
 -    sockaddr_storage ss;
 -    sockaddr *out_addr = (sockaddr*) &ss;
 +    union {
-+	sockaddr	 	sa;
-+	sockaddr_storage	ss;
++        sockaddr		sa;
++        sockaddr_storage	ss;
 +    } socket;
 +    sockaddr *out_addr = &socket.sa;
      size_t out_addrlen;
  
      //  Initialise IP-format family/port and populate temporary output pointers
-diff --git a/src/tcp_listener.cpp b/src/tcp_listener.cpp
-index 4ee88d3..a6ad4b7 100644
---- a/src/tcp_listener.cpp
-+++ b/src/tcp_listener.cpp
-@@ -128,20 +128,24 @@ void zmq::tcp_listener_t::close ()
+--- zeromq-4.1.0/src/tcp_listener.cpp.aliasing~	2014-10-14 10:27:47.000000000 +0200
++++ zeromq-4.1.0/src/tcp_listener.cpp	2014-11-16 12:12:25.006175321 +0100
+@@ -131,20 +131,24 @@ void zmq::tcp_listener_t::close ()
  int zmq::tcp_listener_t::get_address (std::string &addr_)
  {
      // Get the details of the TCP socket
@@ -189,15 +179,17 @@ index 4ee88d3..a6ad4b7 100644
      return addr.to_string (addr_);
  }
  
-@@ -240,13 +244,16 @@ zmq::fd_t zmq::tcp_listener_t::accept ()
+@@ -256,14 +260,17 @@ zmq::fd_t zmq::tcp_listener_t::accept ()
      //  Accept one connection and deal with different failure modes.
      zmq_assert (s != retired_fd);
  
--    struct sockaddr_storage ss = {};
+-    struct sockaddr_storage ss;
+-    memset (&ss, 0, sizeof (ss));
 +    union {
-+	struct sockaddr sa;
-+    	struct sockaddr_storage ss = {};
++	    struct sockaddr		sa;
++	    struct sockaddr_storage	ss;
 +    } socket;
++    memset (&socket.ss, 0, sizeof (socket.ss));
  #ifdef ZMQ_HAVE_HPUX
 -    int ss_len = sizeof (ss);
 +    int ss_len = sizeof (socket.ss);
@@ -210,7 +202,7 @@ index 4ee88d3..a6ad4b7 100644
  
  #ifdef ZMQ_HAVE_WINDOWS
      if (sock == INVALID_SOCKET) {
-@@ -272,7 +279,7 @@ zmq::fd_t zmq::tcp_listener_t::accept ()
+@@ -298,7 +305,7 @@ zmq::fd_t zmq::tcp_listener_t::accept ()
      if (!options.tcp_accept_filters.empty ()) {
          bool matched = false;
          for (options_t::tcp_accept_filters_t::size_type i = 0; i != options.tcp_accept_filters.size (); ++i) {
@@ -219,6 +211,82 @@ index 4ee88d3..a6ad4b7 100644
                  matched = true;
                  break;
              }
--- 
-1.9.0
-
+--- zeromq-4.1.0/src/ip.cpp.omv~	2014-11-16 12:13:33.620317526 +0100
++++ zeromq-4.1.0/src/ip.cpp	2014-11-16 12:14:54.526306062 +0100
+@@ -112,14 +112,17 @@ void zmq::enable_ipv4_mapping (fd_t s_)
+ int zmq::get_peer_ip_address (fd_t sockfd_, std::string &ip_addr_)
+ {
+     int rc;
+-    struct sockaddr_storage ss;
++    union {
++	    struct sockaddr		sa;
++	    struct sockaddr_storage	ss;
++    } socket;
+ 
+ #if defined ZMQ_HAVE_HPUX || defined ZMQ_HAVE_WINDOWS
+-    int addrlen = static_cast <int> (sizeof ss);
++    int addrlen = static_cast <int> (sizeof socket.ss);
+ #else
+-    socklen_t addrlen = sizeof ss;
++    socklen_t addrlen = sizeof socket.ss;
+ #endif
+-    rc = getpeername (sockfd_, (struct sockaddr*) &ss, &addrlen);
++    rc = getpeername (sockfd_, &socket.sa, &addrlen);
+ #ifdef ZMQ_HAVE_WINDOWS
+     if (rc == SOCKET_ERROR) {
+         wsa_assert (WSAGetLastError () != WSANOTINITIALISED &&
+@@ -138,20 +141,14 @@ int zmq::get_peer_ip_address (fd_t sockf
+ #endif
+ 
+     char host [NI_MAXHOST];
+-    rc = getnameinfo ((struct sockaddr*) &ss, addrlen, host, sizeof host,
++    rc = getnameinfo (&socket.sa, addrlen, host, sizeof host,
+         NULL, 0, NI_NUMERICHOST);
+     if (rc != 0)
+         return 0;
+ 
+     ip_addr_ = host;
+ 
+-    union {
+-        struct sockaddr sa;
+-        struct sockaddr_storage sa_stor;
+-    } u;
+-
+-    u.sa_stor = ss;
+-    return (int) u.sa.sa_family;
++    return (int) socket.sa.sa_family;
+ }
+ 
+ void zmq::set_ip_type_of_service (fd_t s_, int iptos)
+--- zeromq-4.1.0/tests/test_srcfd.cpp.omv~	2014-11-16 12:17:40.437231890 +0100
++++ zeromq-4.1.0/tests/test_srcfd.cpp	2014-11-16 12:18:50.275358793 +0100
+@@ -66,13 +66,16 @@ int main (void)
+     assert(srcFd >= 0);
+ 
+ 	  // get the remote endpoint
+-    struct sockaddr_storage ss;
+-    socklen_t addrlen = sizeof ss;
+-    rc = getpeername (srcFd, (struct sockaddr*) &ss, &addrlen);
++    union {
++        struct sockaddr sa;
++        struct sockaddr_storage ss;
++    } socket;
++    socklen_t addrlen = sizeof socket.ss;
++    rc = getpeername (srcFd, &socket.sa, &addrlen);
+     assert (rc == 0);
+ 
+     char host [NI_MAXHOST];
+-    rc = getnameinfo ((struct sockaddr*) &ss, addrlen, host, sizeof host, NULL, 0, NI_NUMERICHOST);
++    rc = getnameinfo (&socket.sa, addrlen, host, sizeof host, NULL, 0, NI_NUMERICHOST);
+     assert (rc == 0);
+ 
+ 	  // assert it is localhost which connected
+@@ -87,7 +90,7 @@ int main (void)
+ 	  usleep(30000);
+ 	
+ 	  // getting name from closed socket will fail
+-    rc = getpeername (srcFd, (struct sockaddr*) &ss, &addrlen);
++    rc = getpeername (srcFd, &socket.sa, &addrlen);
+     assert (rc == -1);
+     assert (errno == EBADF);
+     

@@ -1,15 +1,21 @@
-%define major 3
+%define major 4
 %define oldlib %mklibname %{name} %{major}
 %define olddev %mklibname %{name} -d
 %define oname zmq
 %define libname %mklibname %{oname} %{major}
 %define devname %mklibname %{oname} -d
+%define beta rc1
 
 Summary:	Software library for fast, message-based applications
 Name:		zeromq
-Version:	3.2.4
-Release:	4
+Version:	4.1.0
+%if "%{beta}" != ""
+Release:	0.%{beta}.1
+Source0:	http://download.zeromq.org/%{name}-%{version}-%{beta}.tar.gz
+%else
+Release:	1
 Source0:	http://download.zeromq.org/%{name}-%{version}.tar.gz
+%endif
 Patch0:		zeromq-3.2.4-fix-strict-aliasing-violations.patch
 License:	LGPLv3+
 Group:		Development/Other
@@ -62,16 +68,15 @@ This package contains the libraries and header files needed to develop
 applications that use %{name}.
 
 %prep
-%setup -q 
+%setup -q
 %patch0 -p1 -b .aliasing~
 autoreconf -fiv
 
 %build
-# https://zeromq.jira.com/browse/LIBZMQ-592
-export libzmq_cv_poller=true
+# Forcing gcc because of __attribute__(alloc_size)
 %configure	--with-system-pgm \
-		CC=gcc \
-		CXX=g++
+	CC=gcc \
+	CXX=g++
 %make
 
 %install
@@ -81,7 +86,8 @@ export libzmq_cv_poller=true
 %{_libdir}/libzmq.so.%{major}*
 
 %files -n %{devname}
-%doc AUTHORS ChangeLog COPYING* NEWS README
+%doc AUTHORS ChangeLog COPYING* NEWS
+%{_bindir}/curve_keygen
 %{_libdir}/libzmq.so
 %{_libdir}/pkgconfig/libzmq.pc
 %{_includedir}/zmq*
