@@ -22,7 +22,6 @@ Group:		Development/Other
 Url:		http://www.zeromq.org
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig(uuid)
-BuildRequires:	pkgconfig(openpgm-5.2)
 BuildRequires:	python
 
 %description
@@ -74,7 +73,8 @@ autoreconf -fiv
 
 %build
 # Forcing gcc because of __attribute__(alloc_size)
-%configure	--with-system-pgm \
+%configure \
+	--disable-static \
 	CC=gcc \
 	CXX=g++
 %make
