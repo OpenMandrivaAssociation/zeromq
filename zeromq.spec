@@ -13,7 +13,7 @@ Version:	4.1.0
 Release:	0.%{beta}.1
 Source0:	http://download.zeromq.org/%{name}-%{version}-%{beta}.tar.gz
 %else
-Release:	3
+Release:	4
 Source0:	http://download.zeromq.org/%{name}-%{version}.tar.gz
 %endif
 Patch0:		zeromq-3.2.4-fix-strict-aliasing-violations.patch
