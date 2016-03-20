@@ -1,29 +1,26 @@
 %define major 4
-%define oldlib %mklibname %{name} %{major}
-%define olddev %mklibname %{name} -d
-%define oname zmq
-%define libname %mklibname %{oname} %{major}
-%define devname %mklibname %{oname} -d
-%define beta rc1
+%define libname %mklibname zmq %{major}
+%define devname %mklibname zmq -d
+%define beta %nil
 
 Summary:	Software library for fast, message-based applications
 Name:		zeromq
-Version:	4.1.0
+Version:	4.1.4
 %if "%{beta}" != ""
 Release:	0.%{beta}.1
 Source0:	http://download.zeromq.org/%{name}-%{version}-%{beta}.tar.gz
 %else
-Release:	5
+Release:	1
 Source0:	http://download.zeromq.org/%{name}-%{version}.tar.gz
 %endif
-Patch0:		zeromq-3.2.4-fix-strict-aliasing-violations.patch
 License:	LGPLv3+
 Group:		Development/Other
 Url:		http://www.zeromq.org
-BuildRequires:	pkgconfig(glib-2.0)
-BuildRequires:	pkgconfig(uuid)
-BuildRequires:	pkgconfig(openpgm-5.2)
-BuildRequires:	python
+Patch0:		zeromq-3.2.4-fix-strict-aliasing-violations.patch
+#BuildRequires:	pkgconfig(glib-2.0)
+#BuildRequires:	pkgconfig(uuid)
+#BuildRequires:	pkgconfig(openpgm-5.2)
+#BuildRequires:	python
 
 %description
 The 0MQ lightweight messaging kernel is a library which extends the
@@ -33,11 +30,11 @@ abstraction of asynchronous message queues, multiple messaging
 patterns, message filtering (subscriptions), seamless access to
 multiple transport protocols and more.
 
-%package -n	%{libname}
+%package -n %{libname}
 Summary:	Software library for fast, message-based applications
 Group:		System/Libraries
 Obsoletes:	%{name}-utils
-%rename		%{oldlib}
+%rename		%{_lib}zeromq4 < 4.1.4
 
 %description -n %{libname}
 The 0MQ lightweight messaging kernel is a library which extends the
@@ -49,12 +46,12 @@ multiple transport protocols and more.
 
 This package contains the %{name} shared library.
 
-%package -n	%{devname}
+%package -n %{devname}
 Summary:	Development files for %{name}
 Group:		Development/C
-Requires:	%{libname} = %{version}-%{release}
-Provides:	%{name}-devel = %{version}-%{release}
-%rename		%{olddev}
+Requires:	%{libname} = %{EVRD}
+Provides:	%{name}-devel = %{EVRD}
+%rename		%{_lib}zeromq-devel < 4.1.4
 
 %description -n %{devname}
 The 0MQ lightweight messaging kernel is a library which extends the
@@ -74,9 +71,10 @@ autoreconf -fiv
 
 %build
 # Forcing gcc because of __attribute__(alloc_size)
-%configure	--with-system-pgm \
-	CC=gcc \
-	CXX=g++
+
+%configure \
+	--with-system-pgm
+
 %make
 
 %install
