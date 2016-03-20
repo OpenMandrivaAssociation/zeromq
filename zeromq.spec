@@ -73,7 +73,8 @@ autoreconf -fiv
 # Forcing gcc because of __attribute__(alloc_size)
 
 %configure \
-	--with-system-pgm
+	--with-system-pgm \
+	--with-libsodium
 
 %make
 
