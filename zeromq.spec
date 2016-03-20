@@ -16,11 +16,11 @@ Source0:	http://download.zeromq.org/%{name}-%{version}.tar.gz
 License:	LGPLv3+
 Group:		Development/Other
 Url:		http://www.zeromq.org
-Patch0:		zeromq-3.2.4-fix-strict-aliasing-violations.patch
-#BuildRequires:	pkgconfig(glib-2.0)
-#BuildRequires:	pkgconfig(uuid)
-#BuildRequires:	pkgconfig(openpgm-5.2)
-#BuildRequires:	python
+#Patch0:		zeromq-3.2.4-fix-strict-aliasing-violations.patch
+BuildRequires:	pkgconfig(glib-2.0)
+BuildRequires:	pkgconfig(uuid)
+BuildRequires:	pkgconfig(openpgm-5.2)
+BuildRequires:	python
 
 %description
 The 0MQ lightweight messaging kernel is a library which extends the
