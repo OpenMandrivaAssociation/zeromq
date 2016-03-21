@@ -20,6 +20,7 @@ Url:		http://www.zeromq.org
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig(uuid)
 BuildRequires:	pkgconfig(openpgm-5.2)
+BuildRequires:	pkgconfig(libsodium)
 BuildRequires:	python
 
 %description
