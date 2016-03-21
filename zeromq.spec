@@ -1,4 +1,4 @@
-%define major 4
+%define major 5
 %define libname %mklibname zmq %{major}
 %define devname %mklibname zmq -d
 %define beta %nil
@@ -35,6 +35,7 @@ multiple transport protocols and more.
 Summary:	Software library for fast, message-based applications
 Group:		System/Libraries
 Obsoletes:	%{name}-utils
+Obsoletes:	%{mklibname zmq 4} < 4.1.4
 %rename		%{_lib}zeromq4 < 4.1.4
 
 %description -n %{libname}
