@@ -10,7 +10,7 @@ Version:	4.1.4
 Release:	0.%{beta}.1
 Source0:	http://download.zeromq.org/%{name}-%{version}-%{beta}.tar.gz
 %else
-Release:	1
+Release:	2
 Source0:	http://download.zeromq.org/%{name}-%{version}.tar.gz
 %endif
 License:	LGPLv3+
@@ -35,8 +35,6 @@ multiple transport protocols and more.
 Summary:	Software library for fast, message-based applications
 Group:		System/Libraries
 Obsoletes:	%{name}-utils
-Obsoletes:	%{mklibname zmq 4} < 4.1.4
-%rename		%{_lib}zeromq4 < 4.1.4
 
 %description -n %{libname}
 The 0MQ lightweight messaging kernel is a library which extends the
