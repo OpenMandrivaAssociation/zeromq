@@ -5,13 +5,13 @@
 
 Summary:	Software library for fast, message-based applications
 Name:		zeromq
-Version:	4.1.4
+Version:	4.1.5
 %if "%{beta}" != ""
 Release:	0.%{beta}.1
 Source0:	http://download.zeromq.org/%{name}-%{version}-%{beta}.tar.gz
 %else
-Release:	2
-Source0:	http://download.zeromq.org/%{name}-%{version}.tar.gz
+Release:	1
+Source0:	https://github.com/zeromq/zeromq%(echo %{version} |cut -d. -f1-2 |sed -e 's,\.,-,')/releases/download/v%{version}/%{name}-%{version}.tar.gz
 %endif
 License:	LGPLv3+
 Group:		Development/Other
@@ -22,6 +22,8 @@ BuildRequires:	pkgconfig(uuid)
 BuildRequires:	pkgconfig(openpgm-5.2)
 BuildRequires:	pkgconfig(libsodium)
 BuildRequires:	python
+# For man page generation
+BuildRequires:	xmlto asciidoc
 
 %description
 The 0MQ lightweight messaging kernel is a library which extends the
