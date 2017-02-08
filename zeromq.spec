@@ -5,7 +5,7 @@
 
 Summary:	Software library for fast, message-based applications
 Name:		zeromq
-Version:	4.1.5
+Version:	4.2.1
 %if "%{beta}" != ""
 Release:	0.%{beta}.1
 Source0:	http://download.zeromq.org/%{name}-%{version}-%{beta}.tar.gz
@@ -16,7 +16,6 @@ Source0:	https://github.com/zeromq/zeromq%(echo %{version} |cut -d. -f1-2 |sed -
 License:	LGPLv3+
 Group:		Development/Other
 Url:		http://www.zeromq.org
-#Patch0:		zeromq-3.2.4-fix-strict-aliasing-violations.patch
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig(uuid)
 BuildRequires:	pkgconfig(openpgm-5.2)
@@ -68,7 +67,6 @@ applications that use %{name}.
 
 %prep
 %setup -q
-%patch0 -p1 -b .aliasing~
 autoreconf -fiv
 
 %build
