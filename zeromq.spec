@@ -10,7 +10,7 @@ Version:	4.2.2
 Release:	0.%{beta}.1
 Source0:	http://download.zeromq.org/%{name}-%{version}-%{beta}.tar.gz
 %else
-Release:	1
+Release:	2
 Source0:	https://github.com/zeromq/zeromq%(echo %{version} |cut -d. -f1-2 |sed -e 's,\.,-,')/releases/download/v%{version}/%{name}-%{version}.tar.gz
 %endif
 License:	LGPLv3+
