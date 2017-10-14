@@ -10,7 +10,7 @@ Version:	4.2.2
 Release:	0.%{beta}.1
 Source0:	http://download.zeromq.org/%{name}-%{version}-%{beta}.tar.gz
 %else
-Release:	2
+Release:	1
 Source0:	https://github.com/zeromq/zeromq%(echo %{version} |cut -d. -f1-2 |sed -e 's,\.,-,')/releases/download/v%{version}/%{name}-%{version}.tar.gz
 %endif
 License:	LGPLv3+
@@ -72,7 +72,7 @@ autoreconf -fiv
 %build
 # Forcing gcc because of __attribute__(alloc_size)
 
-%configure \
+CXXFLAGS="%{optflags} -Wno-error=gnu-statement-expression" %configure \
 	--with-system-pgm \
 	--with-libsodium
 
