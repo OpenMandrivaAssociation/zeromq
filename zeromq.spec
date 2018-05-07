@@ -5,13 +5,13 @@
 
 Summary:	Software library for fast, message-based applications
 Name:		zeromq
-Version:	4.2.2
+Version:	4.2.3
 %if "%{beta}" != ""
 Release:	0.%{beta}.1
 Source0:	http://download.zeromq.org/%{name}-%{version}-%{beta}.tar.gz
 %else
 Release:	1
-Source0:	https://github.com/zeromq/zeromq%(echo %{version} |cut -d. -f1-2 |sed -e 's,\.,-,')/releases/download/v%{version}/%{name}-%{version}.tar.gz
+Source0:	https://github.com/zeromq/libzmq/releases/download/v%{version}/zeromq-%{version}.tar.gz
 %endif
 License:	LGPLv3+
 Group:		Development/Other
@@ -52,7 +52,7 @@ Summary:	Development files for %{name}
 Group:		Development/C
 Requires:	%{libname} = %{EVRD}
 Provides:	%{name}-devel = %{EVRD}
-%rename		%{_lib}zeromq-devel < 4.1.4
+%rename		%{_lib}zeromq-devel
 
 %description -n %{devname}
 The 0MQ lightweight messaging kernel is a library which extends the
