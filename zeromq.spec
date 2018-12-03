@@ -5,12 +5,12 @@
 
 Summary:	Software library for fast, message-based applications
 Name:		zeromq
-Version:	4.2.3
+Version:	4.3.0
 %if "%{beta}" != ""
 Release:	0.%{beta}.1
 Source0:	http://download.zeromq.org/%{name}-%{version}-%{beta}.tar.gz
 %else
-Release:	2
+Release:	1
 Source0:	https://github.com/zeromq/libzmq/releases/download/v%{version}/zeromq-%{version}.tar.gz
 %endif
 License:	LGPLv3+
