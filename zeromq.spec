@@ -10,7 +10,7 @@ Version:	4.3.2
 Release:	1
 Source0:	http://download.zeromq.org/%{name}-%{version}-%{beta}.tar.gz
 %else
-Release:	1
+Release:	2
 Source0:	https://github.com/zeromq/libzmq/releases/download/v%{version}/zeromq-%{version}.tar.gz
 %endif
 License:	LGPLv3+
@@ -76,10 +76,10 @@ CXXFLAGS="%{optflags} -Wno-error=gnu-statement-expression" %configure \
 	--with-system-pgm \
 	--with-libsodium
 
-%make
+%make_build
 
 %install
-%makeinstall_std
+%make_install
 
 %files -n %{libname}
 %{_libdir}/libzmq.so.%{major}*
