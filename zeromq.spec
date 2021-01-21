@@ -5,7 +5,7 @@
 
 Summary:	Software library for fast, message-based applications
 Name:		zeromq
-Version:	4.3.3
+Version:	4.3.4
 %if "%{beta}" != ""
 Release:	1
 Source0:	http://download.zeromq.org/%{name}-%{version}-%{beta}.tar.gz
