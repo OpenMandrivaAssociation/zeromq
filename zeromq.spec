@@ -1,16 +1,17 @@
 %define major 5
-%define libname %mklibname zmq %{major}
+%define oldlibname %mklibname zmq 5
+%define libname %mklibname zmq
 %define devname %mklibname zmq -d
 %define beta %nil
 
 Summary:	Software library for fast, message-based applications
 Name:		zeromq
-Version:	4.3.4
+Version:	4.3.5
 %if "%{beta}" != ""
 Release:	0.%{beta}.1
 Source0:	http://download.zeromq.org/%{name}-%{version}-%{beta}.tar.gz
 %else
-Release:	4
+Release:	1
 Source0:	https://github.com/zeromq/libzmq/releases/download/v%{version}/zeromq-%{version}.tar.gz
 %endif
 License:	LGPLv3+
@@ -23,6 +24,12 @@ BuildRequires:	pkgconfig(libsodium)
 BuildRequires:	python
 # For man page generation
 BuildRequires:	xmlto asciidoc
+BuildSystem:	autotools
+BuildOption:	--with-system-pgm
+BuildOption:	--with-libsodium
+
+%patchlist
+zeromq-4.3.5-clang.patch
 
 %description
 The 0MQ lightweight messaging kernel is a library which extends the
@@ -36,6 +43,7 @@ multiple transport protocols and more.
 Summary:	Software library for fast, message-based applications
 Group:		System/Libraries
 Obsoletes:	%{name}-utils
+%rename %{oldlibname}
 
 %description -n %{libname}
 The 0MQ lightweight messaging kernel is a library which extends the
@@ -65,27 +73,13 @@ multiple transport protocols and more.
 This package contains the libraries and header files needed to develop
 applications that use %{name}.
 
-%prep
-%setup -q
-autoreconf -fiv
-
-%build
-# Forcing gcc because of __attribute__(alloc_size)
-
-CXXFLAGS="%{optflags} -Wno-error=gnu-statement-expression" %configure \
-	--with-system-pgm \
-	--with-libsodium
-
-%make_build
-
-%install
-%make_install
+#CXXFLAGS="%{optflags} -Wno-error=gnu-statement-expression"
 
 %files -n %{libname}
 %{_libdir}/libzmq.so.%{major}*
 
 %files -n %{devname}
-%doc AUTHORS ChangeLog COPYING* NEWS
+%doc AUTHORS ChangeLog NEWS
 %{_bindir}/curve_keygen
 %{_libdir}/libzmq.so
 %{_libdir}/pkgconfig/libzmq.pc

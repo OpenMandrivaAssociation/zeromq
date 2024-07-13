@@ -1,0 +1,36 @@
+diff -up zeromq-4.3.5/src/curve_client_tools.hpp.omv~ zeromq-4.3.5/src/curve_client_tools.hpp
+--- zeromq-4.3.5/src/curve_client_tools.hpp.omv~	2024-07-14 00:13:24.935615801 +0200
++++ zeromq-4.3.5/src/curve_client_tools.hpp	2024-07-14 00:13:47.771869564 +0200
+@@ -154,9 +154,12 @@ struct curve_client_tools_t
+ 
+         //  False positives due to https://gcc.gnu.org/bugzilla/show_bug.cgi?id=99578
+ #if __GNUC__ >= 11
++#pragma GCC diagnostic push
+ #pragma GCC diagnostic ignored "-Warray-bounds"
++#ifndef __clang__
+ #pragma GCC diagnostic ignored "-Wstringop-overflow="
+ #endif
++#endif
+         memcpy (&initiate_plaintext[crypto_box_ZEROBYTES], public_key_, 32);
+         memcpy (&initiate_plaintext[crypto_box_ZEROBYTES + 32], vouch_nonce + 8,
+                 16);
+@@ -168,7 +171,6 @@ struct curve_client_tools_t
+         }
+ #if __GNUC__ >= 11
+ #pragma GCC diagnostic pop
+-#pragma GCC diagnostic pop
+ #endif
+ 
+         memcpy (initiate_nonce, "CurveZMQINITIATE", 16);
+diff -up zeromq-4.3.5/src/proxy.cpp.omv~ zeromq-4.3.5/src/proxy.cpp
+--- zeromq-4.3.5/src/proxy.cpp.omv~	2024-07-14 00:14:16.904194002 +0200
++++ zeromq-4.3.5/src/proxy.cpp	2024-07-14 00:14:41.064463645 +0200
+@@ -499,7 +499,7 @@ int zmq::proxy_steerable (class socket_b
+     zmq_pollitem_t itemsout[] = {{frontend_, 0, ZMQ_POLLOUT, 0},
+                                  {backend_, 0, ZMQ_POLLOUT, 0}};
+ 
+-    stats_proxy stats = {0};
++    stats_proxy stats = { { {0} } };
+ 
+     //  Proxy can be in these three states
+     proxy_state_t state = active;
