@@ -16,7 +16,7 @@ Source0:	https://github.com/zeromq/libzmq/releases/download/v%{version}/zeromq-%
 %endif
 License:	LGPLv3+
 Group:		Development/Other
-Url:		http://www.zeromq.org
+Url:		https://www.zeromq.org
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig(uuid)
 BuildRequires:	pkgconfig(openpgm-5.2)
